@@ -1,11 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Card from '../components/card'
 // import styles from '../styles/Home.module.css'
 import Layout from '../components/layout'
 import Modal from '../components/modal'
-import { getAPI } from '../util/api'
+import { getPokemons, Pokemon } from '../util/api'
 
 import Pokemon1 from '/public/image/pokemon-1.png'
 import Pokemon2 from '/public/image/pokemon-2.png'
@@ -13,9 +13,16 @@ import Pokemon3 from '/public/image/pokemon-3.png'
 
 export default function Home() {
   const array = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  const [pokemons, setPokemons] = useState<any>([])
+  const [selectedPokemon, setSelectedPokemons] = useState<any>(null)
 
   useEffect(() => {
-    getAPI('pokemon?limit=9')
+    getPokemons('pokemon?limit=9').then(response => {
+      setPokemons(response)
+      console.log('result', response)
+    }).catch(error => {
+      console.log(error)
+    })
   }, [])
   return (
     <Layout>
@@ -41,9 +48,9 @@ export default function Home() {
         <div className='max-w-sm mx-auto text-center'>All Generation</div>
         <div className='max-w-sm mx-auto text-center -mt-4'>totaling 999999 Pokemon</div>
 
-        <div className='flex flex-row items-stretch justify-between flex-wrap max-w-3xl mx-auto mt-12'>
-          {array.map((items, index) =>
-            <Card key={index} modalId='pokemon-modal' id={index} />
+        <div className='flex flex-row items-stretch justify-center flex-wrap max-w-3xl mx-auto mt-12'>
+          {pokemons.map((items: Pokemon, index: number) =>
+            <Card key={index} modalId='pokemon-modal' id={index} data={items} onClick={(poke: any) => setSelectedPokemons(poke)} />
           )}
         </div>
 
@@ -51,8 +58,8 @@ export default function Home() {
           <div className='flex flex-row items-center justify-between gap-8 max-w-5xl mx-auto'>
             <div className='flex flex-row items-center justify-start font-semibold gap-4'>
               <div className='text-white whitespace-nowrap'>Per Page:</div>
-              <select className="select select-bordered bg-transparent border-white border-2 text-white">
-                <option value={9} selected>9</option>
+              <select className="select select-bordered bg-transparent border-white border-2 text-white" defaultValue={9}>
+                <option value={9}>9</option>
                 <option value={8}>8</option>
                 <option value={7}>7</option>
                 <option value={6}>6</option>
@@ -76,7 +83,9 @@ export default function Home() {
           </div>
         </div>
 
-        <Modal></Modal>
+        { selectedPokemon &&
+          <Modal data={selectedPokemon}></Modal>
+        }
 
       </div>
 
