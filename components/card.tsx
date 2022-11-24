@@ -1,9 +1,21 @@
-export default function Card() {
+// interface 
+interface CardProps {
+  modalId?: string,
+  key?: number,
+  onClick?: any,
+  id?: any,
+}
+
+export default function Card(props: CardProps) {
+  const {
+    modalId = '',
+    onClick = () => { },
+    id = ''
+  } = props
+
   return (
-    <div className="p-2">
-      <div className="card bg-base-100 hover:shadow-md cursor-pointer 
-    w-full transition-all duration-500 ease-in-out hover:-translate-y-1 
-    lg:max-w-[200px] max-w-none">
+    <label className="p-2" htmlFor={modalId} onClick={onClick} id={id}>
+      <div className="card bg-base-100 hover:shadow-md cursor-pointer w-full transition-all duration-500 ease-in-out hover:-translate-y-1 lg:max-w-[200px] max-w-none">
         <figure className="px-3 pt-10">
           <img src="https://placeimg.com/400/225/arch" alt="img" className="h-44 object-cover" />
         </figure>
@@ -27,6 +39,6 @@ export default function Card() {
         </div> */}
         </div>
       </div>
-    </div>
+    </label>
   )
 }

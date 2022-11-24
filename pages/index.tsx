@@ -1,8 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { useEffect } from 'react'
 import Card from '../components/card'
 // import styles from '../styles/Home.module.css'
 import Layout from '../components/layout'
+import Modal from '../components/modal'
+import { getAPI } from '../util/api'
 
 import Pokemon1 from '/public/image/pokemon-1.png'
 import Pokemon2 from '/public/image/pokemon-2.png'
@@ -10,6 +13,10 @@ import Pokemon3 from '/public/image/pokemon-3.png'
 
 export default function Home() {
   const array = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+  useEffect(() => {
+    getAPI('pokemon?limit=9')
+  }, [])
   return (
     <Layout>
       {/* HERO */}
@@ -36,7 +43,7 @@ export default function Home() {
 
         <div className='flex flex-row items-stretch justify-between flex-wrap max-w-3xl mx-auto mt-12'>
           {array.map((items, index) =>
-              <Card key={index} />
+            <Card key={index} modalId='pokemon-modal' id={index} />
           )}
         </div>
 
@@ -68,6 +75,9 @@ export default function Home() {
             <div className='text-white font-semibold'>Per Page: 912398</div>
           </div>
         </div>
+
+        <Modal></Modal>
+
       </div>
 
     </Layout>
