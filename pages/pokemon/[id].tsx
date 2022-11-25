@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { use, useEffect, useState } from "react";
 import Layout from "../../components/layout";
-import { getPokemonDetail, Pokemon } from "../../util/api";
+import { getDetail, Pokemon } from "../../util/api";
 import TypePills from "../../components/type-pills";
 import Image from "next/image";
 import StatMeter from "../../components/stat-meter"
@@ -17,9 +17,10 @@ export default function Details() {
 
     useEffect(() => {
         if (id) {
-            getPokemonDetail(`https://pokeapi.co/api/v2/pokemon/${id}`).then((response: any) => {
+            getDetail(`https://pokeapi.co/api/v2/pokemon/${id}`).then((response: any) => {
                 setPokemon(response)
                 setSelectedImage(response.sprites.front_default)
+                console.log(`https://pokeapi.co/api/v2/pokemon/${id}`,response)
                 if (response.forms.length > 0) getEvolution(response.forms)
             })
         }
@@ -41,7 +42,7 @@ export default function Details() {
     const getEvolution = async (forms: any) => {
         let evolution = []
         for await (let form of forms) {
-            const response = await getPokemonDetail(form.url)
+            const response = await getDetail(form.url)
             evolution.push(response)
         }
         console.log('evolution', evolution)

@@ -9,7 +9,7 @@ export async function getPokemons(endpoint: string) {
       const pokemons = response.data.results
       let pokemonArray = []
       for await (const poke of pokemons) {
-        const pokeDetails = await getPokemonDetail(poke.url)
+        const pokeDetails = await getDetail(poke.url)
         pokemonArray.push(pokeDetails)
       }
       resolve(pokemonArray)
@@ -21,7 +21,7 @@ export async function getPokemons(endpoint: string) {
   })
 }
 
-export async function getPokemonDetail(url: string) {
+export async function getDetail(url: string) {
   return new Promise((resolve, reject) => {
     axios.get(url).then((response) => {
       resolve(response.data)

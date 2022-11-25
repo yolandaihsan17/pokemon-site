@@ -14,8 +14,9 @@ export default function TypePills(props: TypeProps) {
       ${type === pokeTypes.WATER ? 'bg-accent-blue' :
                 type === pokeTypes.FIRE ? 'bg-accent-red' :
                     type === pokeTypes.GRASS ? 'bg-accent-green' :
-                        type === pokeTypes.POISON ? 'bg-accent-orange' :
-                            'bg-accent-cream'}`}>
+                        type === pokeTypes.POISON ? 'bg-violet-500' :
+                            type === pokeTypes.FLYING ? 'bg-sky-500' :
+                                'bg-accent-cream'}`}>
             {type}
         </div>
     )

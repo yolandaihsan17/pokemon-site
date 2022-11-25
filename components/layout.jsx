@@ -11,7 +11,7 @@ export default function Layout(props) {
   } = props
 
   return (
-    <div className=' w-full overflow-x-hidden'>
+    <div className=' w-full overflow-x-hidden pb-12'>
 
       <Head>
         <title>{title}</title>
