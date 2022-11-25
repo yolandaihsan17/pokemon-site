@@ -23,14 +23,13 @@ export default function Paginator(props: PaginatorProps) {
         color = "red",
         pageChanged = () => { },
         limitChanged = () => { },
+        currentPage = 1,
+        limit = 9
     } = props
 
-    const [limit, setLimit] = useState(props.limit ? props.limit : 9)
-    const [currentPage, setCurrentPage] = useState(props.currentPage ? props.currentPage : 1)
     const [displayedNumber, setDisplayedNumber] = useState<any[]>([])
     let totalPages = Math.ceil(totalItems / limit)
 
-    // const [selectedStyle, setSelectedStyle] = useState<string>('')
     const [styling, setStyling] = useState<Styling>({
         text: '',
         hover_background: '',
@@ -41,6 +40,9 @@ export default function Paginator(props: PaginatorProps) {
 
     useEffect(() => {
         console.log('current page', currentPage)
+    }, [currentPage])
+
+    useEffect(() => {
         getDisplayedNumber()
         getStyling()
     }, [currentPage, limit])
@@ -99,13 +101,12 @@ export default function Paginator(props: PaginatorProps) {
     }
 
     const setPage = (page: any) => {
-        if (page !== '...') { setCurrentPage(page); pageChanged(page) }
+        if (page !== '...') {
+            pageChanged(page)
+        }
     }
 
     const handleLimitChanged = (limit: number) => {
-        setCurrentPage(1)
-        setLimit(limit)
-
         // Send to parent
         limitChanged(limit)
     }
