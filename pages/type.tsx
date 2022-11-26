@@ -118,7 +118,7 @@ export default function PokemonType() {
         <Layout>
             <div className="flex flex-row items-stretch justify-start w-full mx-auto gap-2 mt-4 relative">
                 {/* LIST OF TYPES */}
-                <div className="flex flex-col items-start justify-start w-full max-w-xs mr-8 border-r z-20 h-fit backdrop-blur">
+                <div className="flex flex-col items-end justify-start mr-8 border-r z-20 h-fit backdrop-blur w-1/3 pr-12">
                     <div className="font-black text-lg ml-8">Pokemon Type</div>
                     <ul className=" list-disc ml-12">
                         {listTypes.map((item: Type, index: number) => (
