@@ -59,7 +59,8 @@ export default function Details() {
     const getEvolutionChain = async () => {
         const species: any = await getDetail(`https://pokeapi.co/api/v2/pokemon-species/${id}`)
         const evolutionChain: any = await getDetail(species.evolution_chain.url)
-
+        
+        tempChain = []
         checkingNextEvolution(evolutionChain.chain)
 
         let detailedChain = []
