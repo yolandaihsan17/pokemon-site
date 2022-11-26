@@ -7,6 +7,7 @@ export async function getPokemons(endpoint: string) {
   return new Promise((resolve, reject) => {
     axios.get(finalUrl).then(async (response) => {
       const pokemons = response.data.results
+      console.log('data', response.data)
       let pokemonArray = []
       for await (const poke of pokemons) {
         const pokeDetails = await getDetail(poke.url)

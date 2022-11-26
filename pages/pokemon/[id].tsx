@@ -20,9 +20,10 @@ export default function Details() {
             getDetail(`https://pokeapi.co/api/v2/pokemon/${id}`).then((response: any) => {
                 setPokemon(response)
                 setSelectedImage(response.sprites.front_default)
-                console.log(`https://pokeapi.co/api/v2/pokemon/${id}`,response)
                 if (response.forms.length > 0) getEvolution(response.forms)
             })
+
+            getEvolutionChain()
         }
     }, [id])
 
@@ -45,17 +46,50 @@ export default function Details() {
             const response = await getDetail(form.url)
             evolution.push(response)
         }
-        console.log('evolution', evolution)
         setEvolution(evolution)
+    }
+
+    const typeClicked = (type: string) => {
+        router.push(`/type?name=${type}`)
+    }
+
+    // store temporary chain
+    let tempChain: any = []
+
+    const getEvolutionChain = async () => {
+        const species: any = await getDetail(`https://pokeapi.co/api/v2/pokemon-species/${id}`)
+        const evolutionChain: any = await getDetail(species.evolution_chain.url)
+
+        checkingNextEvolution(evolutionChain.chain)
+
+        let detailedChain = []
+        for await (let chain of tempChain) {
+            const evolution = await getDetail(`https://pokeapi.co/api/v2/pokemon/${chain.species.name}`)
+            detailedChain.push(evolution)
+        }
+
+        setEvolution(detailedChain)
+
+    }
+
+    const checkingNextEvolution = (chain: any) => {
+        if (chain.evolves_to.length > 0) {
+            tempChain.push(chain)
+            checkingNextEvolution(chain.evolves_to[0])
+        }
+    }
+
+    const evolutionClicked = (id: number) => {
+        router.push(`/pokemon/${id}`)
     }
 
     return (
         <Layout>
-            {!pokemon && <div>Please wait...</div>}
+            {!pokemon && <div className="flex flex-row items-center justify-center font-black">Please wait...</div>}
             {pokemon &&
                 <div className="flex flex-col items-stretch justify-start gap-4 w-full max-w-5xl mx-auto px-4 pb-24">
                     <div className="w-full flex flex-row items-start justify-center gap-8 flex-wrap mt-12">
-                        {selectedImage && <Image loader={() => selectedImage} src={selectedImage} alt='Pokemon Picture' width={400} height={400} className='shrink-0 object-fill scale-125 object-center' />}
+                        {selectedImage && <Image unoptimized loader={() => selectedImage} src={selectedImage} alt='Pokemon Picture' width={400} height={400} className='shrink-0 object-fill scale-125 object-center' />}
                         <div className='flex flex-col items-start justify-start gap-4 flex-auto max-w-xl'>
 
                             {/* NAME */}
@@ -82,7 +116,7 @@ export default function Details() {
                                 <div className='font-bold'>Type: </div>
                                 <div className="flex flex-row items-center justify-start gap-2 flex-wrap">
                                     {pokemon.types.map((item: any, index: number) => (
-                                        <TypePills type={item.type.name} index={index} size='medium' />
+                                        <TypePills key={index} type={item.type.name} index={index} size='medium' onClick={(type: string) => typeClicked(type)} />
                                     ))}
                                 </div>
                             </div>
@@ -94,9 +128,11 @@ export default function Details() {
                         <div className="font-black text-xl">Other Images:</div>
 
                         <div className="flex flex-row items-start justify-start gap-4 flex-nowrap overflow-x-scroll">
-                            {images.map((item, index) => (
-                                <Image loader={() => item} src={item} alt={`Pokemon Picture ${index + 1}`} width={200} height={200} className={`shrink-0 cursor-pointer ${selectedImage === item ? 'border border-4 border-primary rounded-md shadow-md': ''}`} onClick={() => setSelectedImage(item)}/>
-                            ))}
+                            {images.length > 0 && images.map((item, index) => {
+                                if (item) {
+                                    return <Image unoptimized loader={() => item} src={item} key={index} alt={`Pokemon Picture ${index + 1}`} width={200} height={200} className={`shrink-0 cursor-pointer ${selectedImage === item ? 'border border-4 border-primary rounded-md shadow-md' : ''}`} onClick={() => setSelectedImage(item)} />
+                                } else return <></>
+                            })}
                         </div>
                     </div>
 
@@ -106,7 +142,7 @@ export default function Details() {
 
                         <div className="flex flex-row items-start justify-between gap-4 flex-wrap mt-4 w-full">
                             {pokemon.stats.map((item: any, index: number) => (
-                                <StatMeter number={item.base_stat} name={item.stat.name} />
+                                <StatMeter number={item.base_stat} name={item.stat.name} key={index}/>
                             ))}
                         </div>
                     </div>
@@ -118,7 +154,7 @@ export default function Details() {
 
                             <div className="flex flex-row items-start justify-start gap-4 flex-wrap mt-4 w-full">
                                 {evolution.map((item: any, index: number) => (
-                                    <Evolution {...item} key={index} />
+                                    <Evolution {...item} key={index} index={index} onClick={(id: number) => evolutionClicked(id)}/>
                                 ))}
                             </div>
                         </div>

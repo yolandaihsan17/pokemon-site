@@ -3,10 +3,11 @@ import { useEffect, useState } from "react"
 interface PaginatorProps {
     totalItems: number
     limit: number
-    color?: "red" | "green" | "blue"
+    color?: "red" | "green" | "blue" | "white"
     pageChanged?: Function
     limitChanged?: Function
     currentPage?: number
+    disabled?: boolean
 }
 
 interface Styling {
@@ -24,7 +25,8 @@ export default function Paginator(props: PaginatorProps) {
         pageChanged = () => { },
         limitChanged = () => { },
         currentPage = 1,
-        limit = 9
+        limit = 9,
+        disabled = false
     } = props
 
     const [displayedNumber, setDisplayedNumber] = useState<any[]>([])
@@ -39,7 +41,6 @@ export default function Paginator(props: PaginatorProps) {
     })
 
     useEffect(() => {
-        console.log('current page', currentPage)
     }, [currentPage])
 
     useEffect(() => {
@@ -96,6 +97,15 @@ export default function Paginator(props: PaginatorProps) {
                     background: 'bg-accent-blue'
                 })
                 break;
+            default:
+                setStyling({
+                    text: 'text-white',
+                    border: 'border-white',
+                    hover_background: 'hover:bg-secondary',
+                    hover_text: '',
+                    background: 'bg-secondary'
+                })
+                break;
 
         }
     }
@@ -117,6 +127,7 @@ export default function Paginator(props: PaginatorProps) {
             <div className={`flex flex-row items-center justify-start font-semibold gap-4 text-xs ${styling.text}`}>
                 <div className='whitespace-nowrap'>Per Page:</div>
                 <select
+                    disabled={disabled}
                     className={`select bg-transparent border-2 min-h-0 h-fit py-1 rounded-xl text-xs ${styling.border}`}
                     defaultValue={limit}
                     onChange={(e) => { handleLimitChanged(+e.target.value) }}>
@@ -131,7 +142,7 @@ export default function Paginator(props: PaginatorProps) {
                 {totalPages > 5 && (
                     <>
                         <button
-                            disabled={currentPage === 1}
+                            disabled={currentPage === 1 || disabled}
                             onClick={() => setPage(1)}
                             className={` disabled:border-gray-200 disabled:text-gray-200 cursor-pointer border-2 rounded-xl min-w-[28px] min-h-[28px] flex flex-row items-center justify-center ${styling.border} ${styling.hover_text} ${styling.hover_background} ${styling.text}`}
                         >
@@ -139,7 +150,7 @@ export default function Paginator(props: PaginatorProps) {
                         </button>
 
                         <button
-                            disabled={currentPage === 1}
+                            disabled={currentPage === 1 || disabled}
                             onClick={() => setPage(currentPage - 1)}
                             className={` mr-8 disabled:border-gray-200 disabled:text-gray-200 cursor-pointer border-2 rounded-xl min-w-[28px] min-h-[28px] flex flex-row items-center justify-center ${styling.border} ${styling.hover_text} ${styling.hover_background} ${styling.text}`}
                         >
@@ -150,13 +161,17 @@ export default function Paginator(props: PaginatorProps) {
 
                 {(totalPages > 0 && displayedNumber.length > 0) && displayedNumber.map((item, index) => (
                     <button
+                        disabled={disabled}
                         key={index}
                         onClick={() => setPage(item)}
                         className={`
                             ${item !== '...' ? 'cursor-pointer' : ''} 
-                            border-2 rounded-xl min-w-[28px] min-h-[28px] flex flex-row items-center justify-center 
+                            border-2 rounded-xl min-w-[28px] min-h-[28px] flex-row items-center justify-center 
                             ${styling.border} ${styling.hover_text} ${styling.hover_background} ${styling.text} ${item === currentPage ? styling.background + ' !text-white' : ''}
-                            ${item === '...' ? 'border-none' : ''}`
+                            ${item === '...' ? 'border-none' : ''}
+                            disabled:bg-gray-50/50 disabled:text-gray-300 disabled:border-gray-300
+                            hidden sm:flex w-full sm:w-fit
+                            `
                         }
                     >
                         {item}
@@ -166,7 +181,7 @@ export default function Paginator(props: PaginatorProps) {
                 {totalPages > 5 && (
                     <>
                         <button
-                            disabled={currentPage === totalPages}
+                            disabled={currentPage === totalPages || disabled}
                             onClick={() => setPage(currentPage + 1)}
                             className={` ml-8 disabled:border-gray-200 disabled:text-gray-200 cursor-pointer border-2 rounded-xl min-w-[28px] min-h-[28px] flex flex-row items-center justify-center ${styling.border} ${styling.hover_text} ${styling.hover_background} ${styling.text}`}
                         >
@@ -174,7 +189,7 @@ export default function Paginator(props: PaginatorProps) {
                         </button>
 
                         <button
-                            disabled={currentPage === totalPages}
+                            disabled={currentPage === totalPages || disabled}
                             onClick={() => setPage(totalPages)}
                             className={` disabled:border-gray-200 disabled:text-gray-200 cursor-pointer border-2 rounded-xl min-w-[28px] min-h-[28px] flex flex-row items-center justify-center ${styling.border} ${styling.hover_text} ${styling.hover_background} ${styling.text}`}
                         >
